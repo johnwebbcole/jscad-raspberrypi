@@ -1,0 +1,19 @@
+{
+    "name": "jscad-raspberrypi",
+    "version": "1.0.0",
+    "description": "jscad parts library for RaspberryPi",
+    "main": "jscad-raspberrypi.jscad",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "jscad",
+        "raspberrypi"
+    ],
+    "author": {
+        "name": "John Cole",
+        "email": "johnwebbcole@gmail.com",
+        "url": "http://github.com/johnwebbcole@gmail.com"
+    },
+    "license": "ISC"
+}
