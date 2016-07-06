@@ -212,10 +212,10 @@ RaspberryPi = {
         },
 
         MicroUsbPlug: function (port) {
-            var plug = RaspberryPi.Parts.Cube([10.28, 13, 6.24]).snap(port, 'y', 'outside-').translate([0, -2.2, 0]);
-            var connector = RaspberryPi.Parts.Cube([7, 5.5, 2.28]).snap(plug, 'y', 'outside+').align(plug, 'x').align(plug, 'z');
-            var strainrelief = RaspberryPi.Parts.Cylinder(4.28, 8).rotateX(90).snap(plug, 'y', 'outside-').align(plug, 'x').align(plug, 'z');
-            var cord = RaspberryPi.Parts.Cylinder(2.82, 10).rotateX(90).snap(strainrelief, 'y', 'outside-').align(strainrelief, 'x').align(strainrelief, 'z');
+            var plug = RaspberryPi.Parts.Cube([10.28, 13, 6.24]).snap(port, 'y', 'outside+').translate([0, -2.2, 0]);
+            var connector = RaspberryPi.Parts.Cube([7, 5.5, 2.28]).snap(plug, 'y', 'outside-').align(plug, 'x').align(plug, 'z');
+            var strainrelief = RaspberryPi.Parts.Cylinder(4.28, 8).rotateX(90).snap(plug, 'y', 'outside+').align(plug, 'x').align(plug, 'z');
+            var cord = RaspberryPi.Parts.Cylinder(2.82, 10).rotateX(90).snap(strainrelief, 'y', 'outside+').align(strainrelief, 'x').align(strainrelief, 'z');
 
             var srsz = strainrelief.size();
 
