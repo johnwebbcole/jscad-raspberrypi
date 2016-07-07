@@ -270,17 +270,14 @@ RaspberryPi = {
                 hole.midlineTo('x', 61.5).midlineTo('y', 52.5)
             ];
 
-            return {
-                parts: holes,
-                union: function () {
-                    return union(holes.map(function (o) {
-                        return o.enlarge(options && options.scale || [0, 0, 0]);
-                    }));
-                }
-            }
+            return util.complex('hole1,hole2,hole3,hole4', holes);
+
         },
         pads: function (mb, options) {
-            var pad = LeftSide(RaspberryPi.Parts.Mountingpad(undefined, options && options.height || 4), mb).snap(mb, 'z', 'outside-');
+            options = _.defaults(options, {
+                snap: 'outside-'
+            });
+            var pad = LeftSide(RaspberryPi.Parts.Mountingpad(undefined, options && options.height || 4), mb).snap(mb, 'z', options.snap);
             var pads = [
                 pad.midlineTo('x', 3.5).midlineTo('y', 3.5),
                 pad.midlineTo('x', 61.5).midlineTo('y', 3.5),
@@ -288,14 +285,8 @@ RaspberryPi = {
                 pad.midlineTo('x', 61.5).midlineTo('y', 52.5)
             ];
 
-            return {
-                parts: pads,
-                union: function () {
-                    return union(pads.map(function (o) {
-                        return o.enlarge(options && options.scale || [0, 0, 0]);
-                    }));
-                }
-            }
+            return util.complex('pad1,pad2,pad3,pad4', pads);
+
         }
     },
 
@@ -454,40 +445,42 @@ RaspberryPi = {
         options = _.defaults(options || {}, {
             height: 11,
             thickness: 1,
-            snap: 'inside+',
+            snap: 'outside-',
             gpio: true,
             offset: 2
         });
 
+        console.log('spacer', options);
         var spacer = RaspberryPi.BPlusMounting.pads(mb, {
-            height: options.height
+            height: options.height,
+            snap: options.snap
         });
 
         var holes = RaspberryPi.BPlusMounting.holes(mb, {
             height: 13,
             scale: [0.75, 0.75, 0]
-        }).union().snap(spacer.parts[0], 'z', 'inside-');
+        }).combine().snap(spacer.parts.pad1, 'z', 'inside+');
 
-        var connector = this.Parts.Board(65, 56, 3, options.thickness).snap(spacer.parts[0], 'z', options.snap);
+        var connector = this.Parts.Board(65, 56, 3, options.thickness); //.snap(spacer.parts.pad1, 'z', 'inside+');
 
-        var p1 = spacer.parts[0].centroid();
-        var p2 = spacer.parts[3].centroid();
+        var p1 = spacer.parts.pad1.centroid();
+        var p2 = spacer.parts.pad4.centroid();
         // console.log('Spacer.util.triangle.solve', p1, p2, util.array.toxyz(p1), util.array.toxyz(p2));
         var tri = util.triangle.solve(p1, p2);
         var dy = (Math.sin(util.triangle.toRadians(tri.a)) * 3.5) - 3.5
         var dx = 3.5 - (Math.cos(util.triangle.toRadians(tri.b + 45)) * 3.5)
             // console.log('Spacer', options, tri, dx, dy);
-        var x = this.Parts.Board(tri.C + 5.5, 6.2, 3.1, options.thickness).rotateZ(tri.b).translate([dx, dy, 0]).color('blue').snap(spacer.parts[0], 'z', options.snap)
+        var x = this.Parts.Board(tri.C + 5.5, 6.2, 3.1, options.thickness).rotateZ(tri.b).translate([dx, dy, 0]).color('blue').snap(spacer.parts.pad1, 'z', 'inside+')
 
         var gusset = this.Parts.Board(45, 45, 3, options.thickness)
             .subtract(this.Parts.Board(40, 40, 3, options.thickness).translate([2.5, 2.5, 0]))
             .align(holes, 'xy')
-            .snap(spacer.parts[0], 'z', options.snap).color('green');
+            .snap(spacer.parts.pad1, 'z', 'inside+').color('green');
 
         // var gpio = LeftSide(this.Parts.Board(50.64, 55, 3, 3), connector).midlineTo('x', 32.5).translate([0, 0, -2]).translate([0, 5, 0]);
-        var gpio = LeftSide(this.Parts.Gpio(), mb).snap(spacer.parts[0], 'z', options.snap).midlineTo('x', 32.5).midlineTo('y', 52.5);
+        var gpio = LeftSide(this.Parts.Gpio(), mb).snap(spacer.parts.pad1, 'z', options.snap).midlineTo('x', 32.5).midlineTo('y', 52.5);
 
-        var assembly = union([spacer.union(),
+        var assembly = union([spacer.combine(),
             union([gusset, x, x.mirroredY().translate([0, 56, 0])]).translate([0, 0, -options.offset])
         ]).subtract(holes);
 
