@@ -4,8 +4,7 @@ _boardutils = {
         return CSG.cylinder({
             start: [0, 0, 0],
             end: [0, 0, size.z * 2],
-            radius: r,
-            resolution: 64
+            radius: r
         }).translate([-(size.x / 2) + (center), (size.y / 2) - (center), 0]).setColor(0.75, 0, 0);
     },
 
@@ -14,8 +13,7 @@ _boardutils = {
         return CSG.cylinder({
             start: [0, 0, -h],
             end: [0, 0, h],
-            radius: r,
-            resolution: 64
+            radius: r
         }).translate([(x / 2) - (r + 2.5), 0, h]).setColor(0.75, 0.75, 0);
     },
 
@@ -83,8 +81,7 @@ RaspberryPi = {
             var motherboard = CAG.roundedRectangle({
                 center: [r[0], r[1], 0],
                 radius: r,
-                roundradius: 3.0,
-                resolution: 32
+                roundradius: 3.0
             }).extrude({
                 offset: [0, 0, 1.32]
             }).setColor(0.5, 0.5, 0.5, 0.25);
@@ -97,8 +94,7 @@ RaspberryPi = {
             var board = CAG.roundedRectangle({
                 center: [r[0], r[1], 0],
                 radius: r,
-                roundradius: corner_radius,
-                resolution: 32
+                roundradius: corner_radius
             }).extrude({
                 offset: [0, 0, thickness || 1.62]
             }).setColor(0.5, 0.5, 0.5, 0.25);
@@ -112,8 +108,7 @@ RaspberryPi = {
             return CSG.cylinder({
                 start: [0, 0, -h],
                 end: [0, 0, h],
-                radius: r,
-                resolution: 64
+                radius: r
             }).setColor(0.90, 0.0, 0.0, 0.5);
         },
 
@@ -123,8 +118,7 @@ RaspberryPi = {
             return CSG.cylinder({
                 start: [0, 0, -h],
                 end: [0, 0, h],
-                radius: r,
-                resolution: 64
+                radius: r
             }).setColor(0.90, 0.9, 0.0, 1);
         },
 
@@ -174,8 +168,7 @@ RaspberryPi = {
             var cyl = CSG.cylinder({
                 start: [0, 0, 1],
                 end: [0, 0, -1],
-                radius: 3,
-                resolution: 32
+                radius: 3
             }).rotateX(90);
             return union(
                     block,
@@ -253,8 +246,7 @@ RaspberryPi = {
             return CSG.cylinder({
                 start: [0, 0, -h],
                 end: [0, 0, h],
-                radius: diameter / 2,
-                resolution: 64
+                radius: diameter / 2
             })
 
         }
@@ -380,24 +372,9 @@ RaspberryPi = {
 
         var gpio = LeftSide(this.Parts.Gpio(), mb).snap(mb, 'z', 'outside+').midlineTo('x', 32.5).midlineTo('y', 52.5);
 
-        return {
-            parts: _.zipObject('mb,gpio'.split(','), [mb, gpio]),
-            holes: holes,
-            combine: function (pieces, options) {
-                var scale = options && options.scale || [0, 0, 0];
-                pieces = (pieces || 'mb,gpio').split(',');
-                return union(
-                        _.chain(this.parts)
-                        .pick(pieces)
-                        .values()
-                        .map(function (o) {
-                            return o.enlarge(scale);
-                        })
-                        .value()
-                    )
-                    .subtract(this.holes);
-            }
-        };
+        var hat = util.complex('mb,gpio', [mb.subtract(holes), gpio])
+        hat.holes = holes;
+        return hat;
     },
 
     PiTFT22: function (options) {
@@ -419,25 +396,33 @@ RaspberryPi = {
             button.midlineTo('x', 13.97 + 12.7 + 12.7 + 12.7),
         ];
 
-        return {
-            parts: _.zipObject('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4'.split(','), [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3]]),
-            holes: holes,
-            combine: function (pieces, options) {
-                var scale = options && options.scale || [0, 0, 0];
-                pieces = (pieces || 'mb,gpio,lcd,lcdbevel,button1,button2,button3,button4').split(',');
+        return util.complex('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3]]);
+    },
 
-                return union(
-                        _.chain(this.parts)
-                        .pick(pieces)
-                        .values()
-                        .map(function (o) {
-                            return o.enlarge(scale);
-                        })
-                        .value()
-                    )
-                    .subtract(this.holes);
-            }
-        };
+    PiTFT24: function (options) {
+        var hat = RaspberryPi.Hat();
+        var mb = hat.parts.mb;
+        var holes = hat.holes;
+        var gpio = hat.parts.gpio;
+
+        var lcd = LeftSide(this.Parts.Cube([55, 40, 3.1]), mb).snap(mb, 'z', 'outside-').midlineTo('x', 33.4).midlineTo('y', 28.32).color('black');
+        var lcdbevel = LeftSide(this.Parts.Cube([60, 42, 3]), mb).snap(mb, 'z', 'outside-').translate([4.5, 7, 0]);
+
+        var buttonBase = this.Parts.Cube([7, 6, 2.5]);
+        var button = LeftSide(buttonBase.union(this.Parts.Cylinder(3.1, 1.2).color('black').snap(buttonBase, 'z', 'outside-').align(buttonBase, 'xy')), mb).snap(mb, 'z', 'outside-');
+
+        var buttons = [
+            button.midlineTo('x', 13.97),
+            button.midlineTo('x', 13.97 + 12.7),
+            button.midlineTo('x', 13.97 + 12.7 + 12.7),
+            button.midlineTo('x', 13.97 + 12.7 + 12.7 + 12.7),
+        ];
+
+        var gpio2 = this.Parts.Cube([15, 33, 7])
+            .snap(mb, 'x', 'inside-')
+            .snap(mb, 'z', 'outside+')
+            .align(mb, 'y').color('red');
+        return util.complex('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4,gpio2', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3], gpio2]);
     },
 
     Spacer: function (mb, options) {
@@ -450,7 +435,7 @@ RaspberryPi = {
             offset: 2
         });
 
-        console.log('spacer', options);
+        // console.log('spacer', options);
         var spacer = RaspberryPi.BPlusMounting.pads(mb, {
             height: options.height,
             snap: options.snap
@@ -470,22 +455,28 @@ RaspberryPi = {
         var dy = (Math.sin(util.triangle.toRadians(tri.a)) * 3.5) - 3.5
         var dx = 3.5 - (Math.cos(util.triangle.toRadians(tri.b + 45)) * 3.5)
             // console.log('Spacer', options, tri, dx, dy);
-        var x = this.Parts.Board(tri.C + 5.5, 6.2, 3.1, options.thickness).rotateZ(tri.b).translate([dx, dy, 0]).color('blue').snap(spacer.parts.pad1, 'z', 'inside+')
+        var x = this.Parts.Board(tri.C + 5.5, 6.2, 3.1, options.thickness).rotateZ(tri.b).translate([dx, dy, 0]).snap(spacer.parts.pad1, 'z', 'inside+')
 
-        var gusset = this.Parts.Board(45, 45, 3, options.thickness)
-            .subtract(this.Parts.Board(40, 40, 3, options.thickness).translate([2.5, 2.5, 0]))
+        var gussetInterior = this.Parts.Board(40, 40, 3, options.thickness)
             .align(holes, 'xy')
-            .snap(spacer.parts.pad1, 'z', 'inside+').color('green');
+            .translate([0, 0, -options.offset])
+            // .translate([2.5, 2.5, 0])
+        var gusset = this.Parts.Board(45, 45, 3, options.thickness)
+            .align(holes, 'xy')
+            .translate([0, 0, -options.offset])
+            .subtract(gussetInterior)
+            .snap(spacer.parts.pad1, 'z', 'inside+');
 
         // var gpio = LeftSide(this.Parts.Board(50.64, 55, 3, 3), connector).midlineTo('x', 32.5).translate([0, 0, -2]).translate([0, 5, 0]);
-        var gpio = LeftSide(this.Parts.Gpio(), mb).snap(spacer.parts.pad1, 'z', options.snap).midlineTo('x', 32.5).midlineTo('y', 52.5);
+        var gpio = LeftSide(this.Parts.Gpio(), mb).snap(spacer.parts.pad1, 'z', 'inside+').midlineTo('x', 32.5).midlineTo('y', 52.5);
 
         var assembly = union([spacer.combine(),
             union([gusset, x, x.mirroredY().translate([0, 56, 0])]).translate([0, 0, -options.offset])
         ]).subtract(holes);
 
+        if (options.hollow) assembly = assembly.subtract(gussetInterior.snap(spacer.parts.pad1, 'z', 'inside+').translate([0, 0, -options.offset]));
 
-        return options.gpio ? assembly.subtract(gpio.enlarge([1, 1, 0])) : assembly;
+        return (options.gpio ? assembly.subtract(gpio.enlarge([1, 1, 0])) : assembly).color('yellow');
     },
 
 
@@ -511,31 +502,34 @@ RaspberryPi = {
 
         // return camera;
 
-        return {
-            parts: _.zipObject('board,lenseribbon,lense,ribbon,led,stuff,hole1,hole2,hole3,hole4'.split(','), [board, lenseribbon, lense, ribbon, led, stuff, holes[0], holes[1], holes[2], holes[3]]),
-            holes: holes,
-            combine: function (pieces, options) {
-                options = _.defaults(options || {}, {
-                    scale: [0, 0, 0],
-                    pieces: (pieces || 'board,lenseribbon,lense,ribbon,led,stuff').split(','),
-                    holes: true
-                });
-
-                // return union(_.values(_.pick(this.parts, pieces))).subtract(this.holes);
-                var piece = union(
-                    _.chain(this.parts)
-                    .pick(options.pieces)
-                    .values()
-                    .map(function (o) {
-                        return o.enlarge(options.scale);
-                    })
-                    .value()
-                );
-
-                return options.holes ? piece.subtract(union(this.holes)) : piece;
-
-            }
-        };
+        var part = util.complex('board,lenseribbon,lense,ribbon,led,stuff,hole1,hole2,hole3,hole4', [board, lenseribbon, lense, ribbon, led, stuff, holes[0], holes[1], holes[2], holes[3]]);
+        part.holes = holes;
+        return part;
+        // return {
+        //     parts: _.zipObject('board,lenseribbon,lense,ribbon,led,stuff,hole1,hole2,hole3,hole4'.split(','), [board, lenseribbon, lense, ribbon, led, stuff, holes[0], holes[1], holes[2], holes[3]]),
+        //     holes: holes,
+        //     combine: function (pieces, options) {
+        //         options = _.defaults(options || {}, {
+        //             scale: [0, 0, 0],
+        //             pieces: (pieces || 'board,lenseribbon,lense,ribbon,led,stuff').split(','),
+        //             holes: true
+        //         });
+        //
+        //         // return union(_.values(_.pick(this.parts, pieces))).subtract(this.holes);
+        //         var piece = union(
+        //             _.chain(this.parts)
+        //             .pick(options.pieces)
+        //             .values()
+        //             .map(function (o) {
+        //                 return o.enlarge(options.scale);
+        //             })
+        //             .value()
+        //         );
+        //
+        //         return options.holes ? piece.subtract(union(this.holes)) : piece;
+        //
+        //     }
+        // };
     },
 
     HatStandOff: function (options) {
