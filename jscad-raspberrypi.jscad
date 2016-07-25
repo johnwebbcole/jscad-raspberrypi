@@ -102,8 +102,8 @@ RaspberryPi = {
             return board;
         },
 
-        MountingHole: function (radius, height) {
-            var r = (radius || 2.8) / 2;
+        MountingHole: function (diameter, height) {
+            var r = (diameter || 2.8) / 2;
             var h = (height || 4) / 2;
             return CSG.cylinder({
                 start: [0, 0, -h],
@@ -254,7 +254,7 @@ RaspberryPi = {
 
     BPlusMounting: {
         holes: function (mb, options) {
-            var hole = LeftSide(RaspberryPi.Parts.MountingHole(undefined, options && options.height || 8), mb);
+            var hole = LeftSide(RaspberryPi.Parts.MountingHole(options && options.diameter || undefined, options && options.height || 8), mb);
             var holes = [
                 hole.midlineTo('x', 3.5).midlineTo('y', 3.5),
                 hole.midlineTo('x', 61.5).midlineTo('y', 3.5),
@@ -262,7 +262,7 @@ RaspberryPi = {
                 hole.midlineTo('x', 61.5).midlineTo('y', 52.5)
             ];
 
-            return util.complex('hole1,hole2,hole3,hole4', holes);
+            return util.group('hole1,hole2,hole3,hole4', holes);
 
         },
         pads: function (mb, options) {
@@ -277,7 +277,7 @@ RaspberryPi = {
                 pad.midlineTo('x', 61.5).midlineTo('y', 52.5)
             ];
 
-            return util.complex('pad1,pad2,pad3,pad4', pads);
+            return util.group('pad1,pad2,pad3,pad4', pads);
 
         }
     },
@@ -372,7 +372,7 @@ RaspberryPi = {
 
         var gpio = LeftSide(this.Parts.Gpio(), mb).snap(mb, 'z', 'outside+').midlineTo('x', 32.5).midlineTo('y', 52.5);
 
-        var hat = util.complex('mb,gpio', [mb.subtract(holes), gpio])
+        var hat = util.group('mb,gpio', [mb.subtract(holes), gpio])
         hat.holes = holes;
         return hat;
     },
@@ -396,7 +396,7 @@ RaspberryPi = {
             button.midlineTo('x', 13.97 + 12.7 + 12.7 + 12.7),
         ];
 
-        return util.complex('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3]]);
+        return util.group('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3]]);
     },
 
     PiTFT24: function (options) {
@@ -406,7 +406,7 @@ RaspberryPi = {
         var gpio = hat.parts.gpio;
 
         var lcd = LeftSide(this.Parts.Cube([55, 40, 3.1]), mb).snap(mb, 'z', 'outside-').midlineTo('x', 33.4).midlineTo('y', 28.32).color('black');
-        var lcdbevel = LeftSide(this.Parts.Cube([60, 42, 3]), mb).snap(mb, 'z', 'outside-').translate([4.5, 7, 0]);
+        var lcdbevel = LeftSide(this.Parts.Cube([60, 42, 2]), mb).snap(mb, 'z', 'outside-').translate([4.5, 7, 0]);
 
         var buttonBase = this.Parts.Cube([7, 6, 2.5]);
         var button = LeftSide(buttonBase.union(this.Parts.Cylinder(3.1, 1.2).color('black').snap(buttonBase, 'z', 'outside-').align(buttonBase, 'xy')), mb).snap(mb, 'z', 'outside-');
@@ -422,7 +422,7 @@ RaspberryPi = {
             .snap(mb, 'x', 'inside-')
             .snap(mb, 'z', 'outside+')
             .align(mb, 'y').color('red');
-        return util.complex('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4,gpio2', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3], gpio2]);
+        return util.group('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4,gpio2', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3], gpio2]);
     },
 
     Spacer: function (mb, options) {
@@ -502,7 +502,7 @@ RaspberryPi = {
 
         // return camera;
 
-        var part = util.complex('board,lenseribbon,lense,ribbon,led,stuff,hole1,hole2,hole3,hole4', [board, lenseribbon, lense, ribbon, led, stuff, holes[0], holes[1], holes[2], holes[3]]);
+        var part = util.group('board,lenseribbon,lense,ribbon,led,stuff,hole1,hole2,hole3,hole4', [board, lenseribbon, lense, ribbon, led, stuff, holes[0], holes[1], holes[2], holes[3]]);
         part.holes = holes;
         return part;
         // return {
