@@ -1,19 +1,31 @@
 {
-    "name": "jscad-raspberrypi",
-    "version": "1.0.0",
-    "description": "jscad parts library for RaspberryPi",
-    "main": "jscad-raspberrypi.jscad",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "jscad",
-        "raspberrypi"
-    ],
-    "author": {
-        "name": "John Cole",
-        "email": "johnwebbcole@gmail.com",
-        "url": "http://github.com/johnwebbcole@gmail.com"
-    },
-    "license": "ISC"
+  "name": "jscad-raspberrypi",
+  "version": "1.0.0",
+  "description": "jscad parts library for RaspberryPi",
+  "main": "jscad-raspberrypi.jscad",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jscad",
+    "raspberrypi"
+  ],
+  "author": {
+    "name": "John Cole",
+    "email": "johnwebbcole@gmail.com",
+    "url": "http://github.com/johnwebbcole@gmail.com"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-eslint": "^3.0.1",
+    "gulp-jscad-files": "^1.0.3",
+    "gulp-jsdoc-to-markdown": "^1.2.2",
+    "gulp-plumber": "^1.1.0",
+    "gulp-watch": "^4.3.9"
+  },
+  "dependencies": {
+    "jscad-utils": "^1.1.0"
+  }
 }

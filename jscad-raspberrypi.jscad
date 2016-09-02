@@ -1,3 +1,7 @@
+/**
+ * @module CSG
+ */
+
 _boardutils = {
     CornerHole: function makeCornerHole(r, size, center) {
         center = center || r;
@@ -67,21 +71,15 @@ function LeftSide(o, mb) {
         .snap(mb, 'y', 'inside-');
 }
 
-
+/**
+ * jscad-raspberrypi
+ * @type {Object}
+ * @exports RaspberryPi
+ */
 RaspberryPi = {
 
     Parts: {
         BPlusMotherboard: function () {
-            // var r = util.divA([85, 56], 2);
-            // var motherboard = CAG.roundedRectangle({
-            //     center: [r[0], r[1], 0],
-            //     radius: r,
-            //     roundradius: 3.0
-            // }).extrude({
-            //     offset: [0, 0, 1.32]
-            // }).color('green', 0.75);
-            //
-            // return motherboard;
             return Parts.Board(85, 56, 2, 1.32).color('green');
         },
 
@@ -201,12 +199,9 @@ RaspberryPi = {
 
             var dt = util.calcCenterWith(plug, 'xz', port);
 
-            return _.zipObject('plug,connector,strainrelief,cord,srcutoutup,srcutoutdown'.split(','),
-                _.map([plug, connector, strainrelief, cord, srcutoutup, srcutoutdown], function (o) {
-                    return o.translate(dt).setColor(1, 0.5, 0);
-                }));
-
-            // return plug.union([connector, strainrelief, cord]).align( port,'x').align( port,'z').setColor(1, 0.5, 0);
+            return util.group('plug,connector,strainrelief,cord,srcutoutup,srcutoutdown', [plug, connector, strainrelief, cord, srcutoutup, srcutoutdown]).map(function (part) {
+                return part.translate(dt);
+            });
         },
 
         UsbWifiAdapter: function (usbport, up) {
@@ -255,8 +250,11 @@ RaspberryPi = {
         }
     },
 
-    BPlus: function (options) {
-        options = options || {};
+    /**
+     * Returns a complete RaspberryPi B Plus model.
+     * ![bplus example](jsdoc2md/bplus.png)
+     */
+    BPlus: function () {
 
         var mb = this.Parts.BPlusMotherboard();
 
@@ -289,9 +287,6 @@ RaspberryPi = {
         var activityled = LeftSide(this.Parts.BoardLed(), mb).snap(mb, 'z', 'outside-').translate([1, 43.5, 0]).setColor(0, 1, 0);
         var powerled = LeftSide(this.Parts.BoardLed(), mb).snap(mb, 'z', 'outside-').translate([1, 46, 0]).setColor(1, 0, 0);
 
-        // var musbplug = this.Parts.MicroUsbPlug(microusb);
-        // var wifi = this.Parts.UsbWifiAdapter(usb2);
-
         var microsd = LeftSide(Parts.Cube([15.2, 12, 1.5]), mb).snap(mb, 'z', 'outside+').midlineTo('y', 28).translate([-2.5, 0, 0]);
 
         var group = util.group('mb,ethernet,usb1,usb2,microusb,hdmi,avjack,camera,display,gpio,activityled,powerled,microsd',
@@ -305,6 +300,10 @@ RaspberryPi = {
 
     },
 
+    /**
+     * Returns an empty Pi Hat.
+     * ![hat example](jsdoc2md/hat.gif)
+     */
     Hat: function () {
         var mb = Parts.Board(65.02, 56.39, 3.56, 1.62).color('darkgreen', 0.75);
 
@@ -347,6 +346,10 @@ RaspberryPi = {
         return group;
     },
 
+    /**
+     * Returns an Adafruit PiTFT 2.4 Hat with buttons.
+     * ![PiTFT 2.4 example](jsdoc2md/pitft24.png)
+     */
     PiTFT24: function (options) {
         options = _.defaults(options, {
             buttonCapHeight: 4,
@@ -434,9 +437,9 @@ RaspberryPi = {
         var group = util.group('mb,gpio,lcd,lcdbevel,button1,button2,button3,button4,button5', [mb, gpio, lcd, lcdbevel, buttons[0], buttons[1], buttons[2], buttons[3], buttons[4]]);
 
         group.add(gpio2, 'gpio2', true);
-        group.add(union(buttonCaps), 'buttonCaps');
-        group.add(union(buttonWire), 'buttonWire');
-        group.add(union(buttonWireConnector), 'buttonWireConnector');
+        group.add(union(buttonCaps), 'buttonCaps', true);
+        group.add(union(buttonWire), 'buttonWire', true);
+        group.add(union(buttonWireConnector), 'buttonWireConnector', true);
         group.add(buttonWireClearance, 'buttonWireClearance', true);
         group.add(union(buttonCapClearance), 'buttonCapClearance', true);
         group.holes = hat.holes;
@@ -457,7 +460,6 @@ RaspberryPi = {
             postOnly: false
         });
 
-        // console.log('spacer', options);
         var spacer = RaspberryPi.BPlusMounting.pads(mb, {
             height: options.height,
             snap: options.snap
@@ -467,10 +469,6 @@ RaspberryPi = {
 
         if (options.postOnly) return spacer.combine().color('yellow');
 
-        // var holes = RaspberryPi.BPlusMounting.holes(mb, {
-        //     height: 13,
-        //     scale: [0.75, 0.75, 0]
-        // }).combine().snap(spacer.parts.pad1, 'z', 'inside+');
         if (!options.hollow) {
             var p1 = spacer.parts.pad1.centroid();
             var p2 = spacer.parts.pad4.centroid();
@@ -480,35 +478,31 @@ RaspberryPi = {
             var dx = 3.5 - (Math.cos(util.triangle.toRadians(tri.b + 45)) * 3.5);
             // console.log('Spacer', options, tri, dx, dy);
             var x = Parts.Board(tri.C + 5.5, 6.2, 3.1, options.thickness).rotateZ(tri.b).translate([dx, dy, 0]).snap(spacer.parts.pad1, 'z', 'inside+');
-            var cross = x.union(x.mirroredY().translate([0, 56, 0])) ///).translate([0, 0, -options.offset]));
+            var cross = x.union(x.mirroredY().translate([0, 56, 0]));
         }
 
-
         var gussetInterior = Parts.Board(options.gussetInside[0], options.gussetInside[1], 3, options.thickness)
-            .align(spacers, 'xy')
-            .translate([0, 0, -options.offset]);
-        // .translate([2.5, 2.5, 0])
+            .align(spacers, 'xy');
+
         var gusset = Parts.Board(options.gussetOutside[0], options.gussetOutside[1], 3, options.thickness)
             .align(spacers, 'xy')
-            .translate([0, 0, -options.offset])
             .subtract(gussetInterior)
             .snap(spacer.parts.pad1, 'z', 'inside+');
 
-        // var gpio = LeftSide(Parts.Board(50.64, 55, 3, 3), connector).midlineTo('x', 32.5).translate([0, 0, -2]).translate([0, 5, 0]);
         var gpio = LeftSide(this.Parts.Gpio(), mb).snap(spacer.parts.pad1, 'z', 'inside+').midlineTo('x', 32.5).midlineTo('y', 52.5);
 
         var assembly = spacers
-            .union(gusset)
-            .unionIf(cross, !options.hollow)
-            .subtractIf(gpio.enlarge([1, 1, 0]), options.gpio);
+            .union(gusset.unionIf(cross, !options.hollow).translate([0, 0, -options.offset]))
 
-        // if (options.hollow) assembly = assembly.subtract(gussetInterior.snap(spacer.parts.pad1, 'z', 'inside+').translate([0, 0, -options.offset]));
+        .subtractIf(gpio.enlarge([1, 1, 0]), options.gpio);
 
-        // return (options.gpio ? assembly.subtract() : assembly).color('yellow');
         return assembly.color('yellow');
     },
 
-
+    /**
+     * Returns an Pi camera module.
+     * ![camera example](jsdoc2md/camera.png)
+     */
     CameraModule: function () {
         var board = Parts.Cube([25, 24, 1]).color('green');
         var hole = this.Parts.MountingHole(2).snap(board, 'x', 'inside-').snap(board, 'y', 'inside-');
@@ -537,16 +531,5 @@ RaspberryPi = {
         var standoff = this.Parts.Mountingpad(null, options.height);
         var peg = this.Parts.MountingHole(null, options.height + 3);
         return standoff.union(peg);
-    },
-
-    Create: function (part, options) {
-        // return this.UnitCube();
-        return this[part](options);
-    },
-
-
-
-    init: function () {
-        // echo(_.functions(this))
     }
 };
