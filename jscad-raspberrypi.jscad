@@ -1,5 +1,5 @@
 /**
- * @module CSG
+ * @module RaspberryPi
  */
 
 _boardutils = {
@@ -153,7 +153,7 @@ RaspberryPi = {
             }).rotateX(90);
             return union(
                     block,
-                    cyl.snap(block, 'y', 'outside-')
+                    cyl.snap(block, 'y', 'outside+')
                 )
                 .color('lightgray');
         },
