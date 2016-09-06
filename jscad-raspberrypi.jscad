@@ -61,9 +61,8 @@ _boardutils = {
 
 function RightSide(o, mb) {
     return o.snap(mb, 'x', 'inside+')
-        .snap(mb, 'y', 'inside-')
-        .snap(mb, 'z', 'inside-')
-        .translate([2, 0, 1.44]);
+        .snap(mb, 'z', 'outside-')
+        .translate([2, 0, 0]);
 }
 
 function LeftSide(o, mb) {
@@ -113,76 +112,39 @@ RaspberryPi = {
         },
 
         UsbJack: function () {
-            var r = util.divA([17.0, 13.36, 14.42], 2);
-            return CSG.cube({
-                    center: [0, 0, 0],
-                    radius: r
-                })
-                .color('lightgray');
+            var jack = util.group('body', Parts.Cube([16.4, 13.36, 17.0 - 1.5]).color('lightgray'));
+            jack.add(Parts.Cube([0.75, 15.3, 17.68 - 1.5])
+                .align(jack.parts.body, 'yz')
+                .snap(jack.parts.body, 'x', 'outside-')
+                .color('lightgray'), 'flange');
+
+            return jack;
         },
 
         MicroUsb: function () {
-            var r = util.divA([7.59, 5.7, 2.64], 2);
-            return CSG.cube({
-                    center: [0, 0, 0],
-                    radius: r
-                })
-                .color('lightgray');
+            return Parts.Cube([7.59, 5.7, 2.64]).color('lightgray')
         },
 
         Hdmi: function () {
-            var r = util.divA([15, 11.57, 7.4], 2);
-            return CSG.cube({
-                    center: [0, 0, 0],
-                    radius: r
-                })
-                .color('lightgray');
+            return Parts.Cube([15, 11.57, 7.4]).color('lightgray');
         },
 
         AvJack: function () {
-            var r = util.divA([6.9, 12.47, 5.6], 2);
-            var block = CSG.cube({
-                center: [0, 0, 0],
-                radius: r
-            });
-
-            var cyl = CSG.cylinder({
-                start: [0, 0, 1],
-                end: [0, 0, -1],
-                radius: 3
-            }).rotateX(90);
-            return union(
-                    block,
-                    cyl.snap(block, 'y', 'outside+')
-                )
-                .color('lightgray');
+            var block = Parts.Cube([6.9, 12.47, 5.6]).color('lightgray');
+            var cyl = Parts.Cylinder(6, 2).rotateX(90).align(block, 'xz').snap(block, 'y', 'outside+').color('black');
+            return util.group('block,cylinder', [block, cyl]);
         },
 
         Ribbon: function () {
-            var r = util.divA([3, 22.4, 5.7], 2);
-            return CSG.cube({
-                    center: [0, 0, 0],
-                    radius: r
-                })
-                .color('lightgray');
+            return Parts.Cube([3, 22.4, 5.7]).color('gray');
         },
 
         Gpio: function () {
-            var r = util.divA([50.64, 5, 8.72], 2);
-            return CSG.cube({
-                    center: [0, 0, 0],
-                    radius: r
-                })
-                .color('lightgray');
+            return Parts.Cube([50.64, 5, 8.72]).color('gray');
         },
 
         BoardLed: function () {
-            var r = util.divA([1, 2, 0.7], 2);
-            return CSG.cube({
-                    center: [0, 0, 0],
-                    radius: r
-                })
-                .color('lightgray');
+            return Parts.Cube([1, 2, 0.7]);
         },
 
         MicroUsbPlug: function (port) {
@@ -230,14 +192,18 @@ RaspberryPi = {
                 hole.midlineTo('x', 61.5).midlineTo('y', 52.5)
             ];
 
-            return util.group('hole1,hole2,hole3,hole4', holes);
+            var b = mb.getBounds();
+            return util.group('hole1,hole2,hole3,hole4', holes).map(function (part) {
+                return part.translate([b[0].x, b[0].y, b[0].z]);
+            });
 
         },
         pads: function (mb, options) {
-            options = _.defaults(options, {
+            options = util.defaults(options, {
                 snap: 'outside-'
             });
-            var pad = LeftSide(RaspberryPi.Parts.Mountingpad(undefined, options && options.height || 4), mb).snap(mb, 'z', options.snap);
+            var pad = RaspberryPi.Parts.Mountingpad(undefined, options && options.height || 4)
+                .snap(mb, 'z', options.snap);
             var pads = [
                 pad.midlineTo('x', 3.5).midlineTo('y', 3.5),
                 pad.midlineTo('x', 61.5).midlineTo('y', 3.5),
@@ -245,7 +211,10 @@ RaspberryPi = {
                 pad.midlineTo('x', 61.5).midlineTo('y', 52.5)
             ];
 
-            return util.group('pad1,pad2,pad3,pad4', pads);
+            var b = mb.getBounds();
+            return util.group('pad1,pad2,pad3,pad4', pads).map(function (part) {
+                return part.translate([b[0].x, b[0].y, b[0].z]);
+            });
 
         }
     },
@@ -254,14 +223,27 @@ RaspberryPi = {
      * Returns a complete RaspberryPi B Plus model.
      * ![bplus example](jsdoc2md/bplus.png)
      */
-    BPlus: function () {
+    BPlus: function (three) {
 
         var mb = this.Parts.BPlusMotherboard();
 
+        var group = util.group('mb', mb);
         // Right side parts
-        var ethernet = RightSide(this.Parts.EthernetJack(), mb).midlineTo('y', 10.25);
-        var usb1 = RightSide(this.Parts.UsbJack(), mb).midlineTo('y', 29);
-        var usb2 = RightSide(this.Parts.UsbJack(), mb).midlineTo('y', 47);
+        group.add(RightSide(this.Parts.EthernetJack(), mb).midlineTo('y', 10.25), 'ethernet');
+
+
+        group.add(this.Parts.UsbJack()
+            .snap('flange', mb, 'x', 'inside+', 2)
+            .snap('flange', mb, 'z', 'outside-')
+            .map(function (part) {
+                return part.midlineTo('y', 29);
+            }).combine(), 'usb1');
+        group.add(this.Parts.UsbJack()
+            .snap('flange', mb, 'x', 'inside+', 2)
+            .snap('flange', mb, 'z', 'outside-')
+            .map(function (part) {
+                return part.midlineTo('y', 47);
+            }).combine(), 'usb2');
 
         var hole = LeftSide(this.Parts.MountingHole(undefined, 8), mb);
         var holes = [
@@ -271,33 +253,27 @@ RaspberryPi = {
             hole.midlineTo('x', 61.5).midlineTo('y', 52.5)
         ];
 
-        var pad = LeftSide(this.Parts.Mountingpad(undefined, 4), mb).snap(mb, 'z', 'outside-').color('yellow');
-        var pads = [
-            pad.midlineTo('x', 3.5).midlineTo('y', 3.5),
-            pad.midlineTo('x', 61.5).midlineTo('y', 3.5),
-            pad.midlineTo('x', 3.5).midlineTo('y', 52.5),
-            pad.midlineTo('x', 61.5).midlineTo('y', 52.5)
-        ];
-        var microusb = LeftSide(this.Parts.MicroUsb(), mb).snap(mb, 'z', 'outside-').midlineTo('x', 10.6).translate([0, -1, 0]);
-        var hdmi = LeftSide(this.Parts.Hdmi(), mb).snap(mb, 'z', 'outside-').midlineTo('x', 32).translate([0, -2, 0]);
-        var avjack = LeftSide(this.Parts.AvJack(), mb).snap(mb, 'z', 'outside-').midlineTo('x', 53.5).translate([0, -2, 0]);
-        var camera = LeftSide(this.Parts.Ribbon(), mb).snap(mb, 'z', 'outside-').midlineTo('x', 45);
-        var display = LeftSide(this.Parts.Ribbon(), mb).snap(mb, 'z', 'outside-').midlineTo('x', 3.5).midlineTo('y', 28);
-        var gpio = LeftSide(this.Parts.Gpio(), mb).snap(mb, 'z', 'outside-').midlineTo('x', 32.5).midlineTo('y', 52.5);
-        var activityled = LeftSide(this.Parts.BoardLed(), mb).snap(mb, 'z', 'outside-').translate([1, 43.5, 0]).setColor(0, 1, 0);
-        var powerled = LeftSide(this.Parts.BoardLed(), mb).snap(mb, 'z', 'outside-').translate([1, 46, 0]).setColor(1, 0, 0);
+        group.add(this.Parts.MicroUsb().snap(mb, 'z', 'outside-').midlineTo('x', 10.6).translate([0, -1, 0]), 'microusb');
+        group.add(this.Parts.Hdmi().snap(mb, 'z', 'outside-').midlineTo('x', 32).translate([0, -2, 0]), 'hdmi');
+        group.add(this.Parts.AvJack().snap('block', mb, 'z', 'outside-').map(function (part) {
+            return part.midlineTo('x', 53.5);
+        }), 'avjack', false, true);
+        group.add(this.Parts.Ribbon().snap(mb, 'z', 'outside-').midlineTo('x', 45), 'camera');
+        group.add(this.Parts.Ribbon().snap(mb, 'z', 'outside-').midlineTo('x', 3.5).midlineTo('y', 28), 'display');
+        group.add(this.Parts.Gpio().snap(mb, 'z', 'outside-').midlineTo('x', 32.5).midlineTo('y', 52.5), 'gpio');
+        if (three) {
+            group.add(this.Parts.BoardLed().snap(mb, 'z', 'outside-').midlineTo('x', 1.1).midlineTo('y', 7.9).color('lightgreen'), 'activityled');
+            group.add(this.Parts.BoardLed().snap(mb, 'z', 'outside-').midlineTo('x', 1.1).midlineTo('y', 11.5).color('red'), 'powerled');
+        } else {
+            group.add(this.Parts.BoardLed().snap(mb, 'z', 'outside-').translate([1, 43.5, 0]).color('lightgreen'), 'activityled');
+            group.add(this.Parts.BoardLed().snap(mb, 'z', 'outside-').translate([1, 46, 0]).color('red'), 'powerled');
+        }
 
-        var microsd = LeftSide(Parts.Cube([15.2, 12, 1.5]), mb).snap(mb, 'z', 'outside+').midlineTo('y', 28).translate([-2.5, 0, 0]);
-
-        var group = util.group('mb,ethernet,usb1,usb2,microusb,hdmi,avjack,camera,display,gpio,activityled,powerled,microsd',
-            _.zipObject('mb,ethernet,usb1,usb2,microusb,hdmi,avjack,camera,display,gpio,activityled,powerled,microsd,hole1,hole2,hole3,hole4,pad1,pad2,pad3,pad4'.split(','), [mb, ethernet, usb1, usb2, microusb, hdmi, avjack, camera, display, gpio, activityled, powerled, microsd, holes[0], holes[1], holes[2], holes[3], pads[0], pads[1], pads[2], pads[3]]));
-
+        group.add(Parts.Cube([15.2, 12, 1.5]).snap(mb, 'z', 'outside+').midlineTo('y', 28).translate([-2.5, 0, 0]).color('silver'), 'microsd');
 
         group.holes = holes;
 
         return group;
-
-
     },
 
     /**
@@ -351,7 +327,7 @@ RaspberryPi = {
      * ![PiTFT 2.4 example](jsdoc2md/pitft24.png)
      */
     PiTFT24: function (options) {
-        options = _.defaults(options, {
+        options = util.defaults(options, {
             buttonCapHeight: 4,
             clearance: 0.9
         });
@@ -449,7 +425,7 @@ RaspberryPi = {
 
     Spacer: function (mb, options) {
         mb = mb || RaspberryPi.BPlus().parts.mb;
-        options = _.defaults(options || {}, {
+        options = util.defaults(options || {}, {
             height: 11,
             thickness: 1,
             snap: 'outside-',
