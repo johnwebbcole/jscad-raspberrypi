@@ -6,6 +6,8 @@
 
 This is a collection of jscad parts that model a RaspberryPi BPlus and various Hats. These models use the [jscad-utils](https://github.com/johnwebbcole/jscad-utils) library and return jscad-utils [`group` objects](https://github.com/johnwebbcole/jscad-utils#utilgroupnames-objects--object).
 
+[Here](http://openjscad.org/#https://gist.githubusercontent.com/johnwebbcole/d05fe472a86cfc31b4f1342cbf8acb12/raw/1bccaf05956958775fac248096ae8bc4666e286e/rpi-test.jscad) is a live example.
+
 ## Installation
 
 Install `jscad-raspberrypi` using NPM:
