@@ -1,5 +1,7 @@
 [![view on npm](http://img.shields.io/npm/v/jscad-raspberrypi.svg)](https://www.npmjs.org/package/jscad-raspberrypi) [![npm module downloads](http://img.shields.io/npm/dt/jscad-raspberrypi.svg)](https://www.npmjs.org/package/jscad-raspberrypi)
 
+![Twitter Follow](https://img.shields.io/twitter/follow/johnwebbcole?label=Follow&style=social)
+
 # jscad-raspberrypi
 
 ![bplus example](./images/bplus.png)

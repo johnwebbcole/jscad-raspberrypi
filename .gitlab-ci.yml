@@ -3,6 +3,8 @@ image: node:lts-alpine
 pages:
   script:
     - npm ci
+    - cp -R src srcx
+    - find ./srcx -name "*.js" -print0 | xargs -0 sed -i .bak "s/@typedef {typeof import/@xtypedef {typeof import/g"
     - npm run docs
     - ls -al -R public
   artifacts:

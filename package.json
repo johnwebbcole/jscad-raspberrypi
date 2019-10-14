@@ -7,7 +7,7 @@
     "test": "nyc ava -- --verbose",
     "build": "gulp all",
     "start": "gulp",
-    "docs": "vuepress-jsdoc --source ./src --dist ./docs && npx vuepress build ./docs"
+    "docs": "vuepress-jsdoc --source ./srcx --dist ./docs && npx vuepress build ./docs"
   },
   "keywords": [
     "jscad",
