@@ -47,4 +47,21 @@ function main(params) {
 }
 ```
 
+## Examples
+
+Examples are placed in the `dist` directory. This allows the files to be included directly into openjscad.org.
+
+Here are some of the examples:
+
+- [example](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/example.jscad) an example showing how to combine several parts.
+- [bplus](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/bplus.jscad) an example bplus board.
+- [bplus3](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/bplus3.jscad) an example bplus modle 3 board.
+- [camera-module-v1](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/camera-module-v1.jscad) an example camera module version 1.
+- [camera-module-v2](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/camera-module-v2.jscad) an example camera module version 2.
+- [hat-standoff](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/hat-standoff.jscad) an example standoff.
+- [hat](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/hat.jscad) an example hat.
+- [pi-tft22](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/pi-tft22.jscad) an example Adafruit TFT22.
+- [pi-tft24](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/pi-tft24.jscad) an example Adafruit TFT24.
+- [spacer](http://openjscad.org/#https://gitlab.com/johnwebbcole/jscad-raspberrypi/raw/master/dist/examples/spacer.jscad) an example spacer.
+
 &copy; 2016 John Cole <johnwebbcole@gmail.com>.
