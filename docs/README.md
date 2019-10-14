@@ -4,7 +4,7 @@
 
 # jscad-raspberrypi
 
-![bplus example](./docs/images/bplus.png)
+![bplus example](./images/bplus.png)
 This is a collection of jscad parts that model a RaspberryPi BPlus and various Hats. These models use the [jscad-utils](https://github.com/johnwebbcole/jscad-utils) library and return jscad-utils [`group` objects](https://github.com/johnwebbcole/jscad-utils#utilgroupnames-objects--object).
 
 ## Installation
