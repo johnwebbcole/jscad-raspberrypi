@@ -12,14 +12,14 @@ module.exports = {
     }
   },
 
-  // plugins: [
-  //   [
-  //     '@vuepress/google-analytics',
-  //     {
-  //       ga: 'UA-135958052-3'
-  //     }
-  //   ]
-  // ],
+  plugins: [
+    [
+      '@vuepress/google-analytics',
+      {
+        ga: 'UA-135958052-4'
+      }
+    ]
+  ],
 
   themeConfig: {
     nav: [
