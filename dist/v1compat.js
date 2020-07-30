@@ -35,7 +35,7 @@ function initJscadRPi() {
   // include:compat
   // ../dist/index.js
 /* 
- * jscad-raspberrypi version 1.2.0 
+ * @jwc/jscad-raspberrypi version 2.0.0 
  * https://gitlab.com/johnwebbcole/jscad-raspberrypi
  */
 var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
@@ -149,7 +149,7 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
     pads: pads
   };
 
-  var debug$1 = jscadUtils.Debug('jscadRPi:BPlus');
+  var debug$1 = jscadUtils.Debug("jscadRPi:BPlus");
   /**
    * Returns a complete RaspberryPi B Plus model.
    * ![bplus example](../images/bplus.png)
@@ -182,45 +182,47 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
   // endinject
    */
 
-  function BPlus() {
-    var three = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    debug$1('BPlus model three:', three);
+  function BPlus(model) {
+    model = !model ? 2 : model === true ? 3 : model;
+    debug$1("BPlus model:", model);
     var mb = BPlusMotherboard();
-    var group = jscadUtils.Group('mb', mb); // Right side parts
+    var group = jscadUtils.Group("mb", mb); // Right side parts
 
-    group.add(RightSide(EthernetJack(), mb).midlineTo('y', 10.25), 'ethernet');
-    debug$1('mb', mb);
+    group.add(RightSide(EthernetJack(), mb).midlineTo("y", 10.25), "ethernet");
+    debug$1("mb", mb);
     var usb = UsbJack();
-    var usbTranslation = jscadUtils.array.add(usb.parts.flange.calcSnap(mb, 'x', 'inside+'), [2, 0, 0], usb.parts.body.calcSnap(mb, 'y', 'inside-'), usb.parts.body.calcSnap(mb, 'z', 'outside-'));
-    debug$1('usbTranslation', usbTranslation, jscadUtils.util.calcmidlineTo(usb.parts.body, 'y', 29));
-    group.add(usb.clone().translate(usbTranslation).translate(jscadUtils.util.calcmidlineTo(usb.parts.body, 'y', 29)), 'usb1', false, 'usb1');
-    group.add(usb.clone().translate(usbTranslation).translate(jscadUtils.util.calcmidlineTo(usb.parts.body, 'y', 47)), 'usb2', false, 'usb2');
-    group.add(MicroUsb().snap(mb, 'z', 'outside-').midlineTo('x', 10.6).translate([0, -2, 0]), 'microusb');
-    group.add(Hdmi().snap(mb, 'z', 'outside-').midlineTo('x', 32).translate([0, -2, 0]), 'hdmi');
-    group.add(AvJack().snap('block', mb, 'z', 'outside-').midlineTo('block', 'x', 53.5), 'avjack', false, 'avjack');
-    group.add(Ribbon().snap(mb, 'z', 'outside-').midlineTo('x', 45), 'camera');
-    group.add(Ribbon().snap(mb, 'z', 'outside-').midlineTo('x', 3.5).midlineTo('y', 28), 'display');
-    group.add(Gpio().snap(mb, 'z', 'outside-').midlineTo('x', 32.5).midlineTo('y', 52.5), 'gpio'); // var led: {
+    var usbTranslation = jscadUtils.array.add(usb.parts.flange.calcSnap(mb, "x", "inside+"), [2, 0, 0], usb.parts.body.calcSnap(mb, "y", "inside-"), usb.parts.body.calcSnap(mb, "z", "outside-"));
+    debug$1("usbTranslation", usbTranslation, jscadUtils.util.calcmidlineTo(usb.parts.body, "y", 29));
+    group.add(usb.clone().translate(usbTranslation).translate(jscadUtils.util.calcmidlineTo(usb.parts.body, "y", 29)), "usb1", false, "usb1");
+    group.add(usb.clone().translate(usbTranslation).translate(jscadUtils.util.calcmidlineTo(usb.parts.body, "y", 47)), "usb2", false, "usb2");
+    group.add(MicroUsb().snap(mb, "z", "outside-").midlineTo("x", 10.6).translate([0, -2, 0]), "microusb");
+    group.add(Hdmi().snap(mb, "z", "outside-").midlineTo("x", 32).translate([0, -2, 0]), "hdmi");
+    group.add(AvJack().snap("block", mb, "z", "outside-").midlineTo("block", "x", 53.5), "avjack", false, "avjack");
+    group.add(Ribbon().snap(mb, "z", "outside-").midlineTo("x", 45), "camera");
+    group.add(Ribbon().snap(mb, "z", "outside-").midlineTo("x", 3.5).midlineTo("y", 28), "display");
+    group.add(Gpio().snap(mb, "z", "outside-").midlineTo("x", 32.5).midlineTo("y", 52.5), "gpio"); // var led: {
     //   three: { green: {x: 1.1, y: 7.9}},
     //   two: { green: {x: 1.1, y: 7.9}}
     // }
 
-    if (three) {
-      group.add(BoardLed().snap(mb, 'z', 'outside-').midlineTo('x', 1.1).midlineTo('y', 7.9).color('lightgreen'), 'activityled');
-      group.add(BoardLed().snap(mb, 'z', 'outside-').midlineTo('x', 1.1).midlineTo('y', 11.5).color('red'), 'powerled');
+    if (model == 3) {
+      group.add(BoardLed().snap(mb, "z", "outside-").midlineTo("x", 1.1).midlineTo("y", 7.9).color("lightgreen"), "activityled");
+      group.add(BoardLed().snap(mb, "z", "outside-").midlineTo("x", 1.1).midlineTo("y", 11.5).color("red"), "powerled");
     } else {
-      group.add(BoardLed().snap(mb, 'z', 'outside-').translate([1, 43.5, 0]).color('lightgreen'), 'activityled');
-      group.add(BoardLed().snap(mb, 'z', 'outside-').translate([1, 46, 0]).color('red'), 'powerled');
+      group.add(BoardLed().snap(mb, "z", "outside-").translate([1, 43.5, 0]).color("lightgreen"), "activityled");
+      group.add(BoardLed().snap(mb, "z", "outside-").translate([1, 46, 0]).color("red"), "powerled");
     }
 
-    group.add(jscadUtils.parts.Cube([15.2, 12, 1.5]).snap(mb, 'z', 'outside+').midlineTo('y', 28).translate([-2.5, 0, 0]).color('silver'), 'microsd');
+    group.add(jscadUtils.parts.Cube([15.2, 12, 1.5]).snap(mb, "z", "outside+").midlineTo("y", 28).translate([-2.5, 0, 0]).color("silver"), "microsd");
     group.holes = holes(mb).combine();
     return group;
   }
 
-  /** @xtypedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
+  /** @typedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
 
   /**
+   * Returns a Raspberry Pi camera v1 group.
+   * ![camera v1 example](../images/camerav1.png)
    * @function CameraModuleV1
    * @return {JsCadUtilsGroup} {description}
    * @exports CameraModuleV1
@@ -268,9 +270,11 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
     return g;
   }
 
-  /** @xtypedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
+  /** @typedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
 
   /**
+   * Returns a Raspberry Pi camera v2 group.
+   * ![camera v1 example](../images/camerav2.png)
    * @function CameraModuleV2
    * @return {JsCadUtilsGroup} {description}
    */
@@ -312,7 +316,7 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
   }
 
   var union$1 = scadApi.booleanOps.union;
-  /** @xtypedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
+  /** @typedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
 
   /**
    * Returns an empty Pi Hat.
@@ -342,12 +346,11 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
     return hat;
   }
 
-  var union$2 = scadApi.booleanOps.union;
-  /** @xtypedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
+  /** @typedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
 
   /**
    * Returns an set of standoffs for a RPi Hat.
-   * ![hat example](../images/hat.gif)
+   * ![hat stand-off example](../images/hat-standoff.png)
    * @function Hat
    * @param  {object} [options] An options object.
    * @param  {number} [options.height] The height of the standoff.
@@ -365,6 +368,8 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
   }
 
   /**
+   * Returns an Adafruit PiTFT 2.2 Hat with buttons.
+   * ![PiTFT 2.2 example](../images/pitft22.png)
    * @function PiTFT22
    * @return {Group} A group of objects to build a PiTFT22.
    */
@@ -389,9 +394,9 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
     return group;
   }
 
-  var union$3 = scadApi.booleanOps.union;
+  var union$2 = scadApi.booleanOps.union;
   var debug$2 = jscadUtils.Debug('jscadRPi:PiTFT24');
-  /** @xtypedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
+  /** @typedef {typeof import("@jwc/jscad-utils/src/group").JsCadUtilsGroup} JsCadUtilsGroup */
 
   /**
    * Returns an Adafruit PiTFT 2.4 Hat with buttons.
@@ -404,6 +409,33 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
    * @param  {number} [options.clearance=0.9] The clearance between the buttons and their holes.
    * @param  {CSG} [pi]      A RaspberryPi CSG object to align the PiTFT24 object to.
    * @return {JsCadUtilsGroup} A group object with all of the parts for a PiTFT24.
+   * 
+  export default function PiTFT24(options = {}, pi) {
+   * @exports BPlus
+   * @memberof! RaspberryPi
+   * 
+   * @example
+   function main() {
+    util.init(CSG);
+
+    var pi = RaspberryPi.BPlus().align('mb', util.unitCube(), 'xy');
+
+    pi.add(RaspberryPi.Spacer({}, pi.parts.mb), 'spacer');
+
+    pi.add(
+      RaspberryPi.PiTFT24({}, pi.parts.mb).snap(
+        'mb',
+        pi.parts.spacer,
+        'z',
+        'outside-'
+      ),
+      'screen'
+    );
+    return pi.combineAll();
+  }
+
+  // include:js
+  // endinject
    */
 
   function PiTFT24() {
@@ -445,21 +477,21 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
     var buttonCapBase = jscadUtils.parts.Cube([6.6, 4, capBaseHeight]).color('blue');
     var buttonCapTop = jscadUtils.parts.Cube([6.1, 3.5, options.buttonCapHeight - capBaseHeight]).snap(buttonCapBase, 'z', 'outside-').align(buttonCapBase, 'xy').fillet(1, 'z+').color('deepskyblue');
     var buttonCaps = buttons.map(function (button) {
-      return union$3([buttonCapBase, buttonCapTop]).snap(button, 'z', 'outside-').align(button, 'xy');
+      return union$2([buttonCapBase, buttonCapTop]).snap(button, 'z', 'outside-').align(button, 'xy');
     });
-    group.add(union$3(buttonCaps), 'buttonCaps', hiddenPart);
-    group.add(union$3(buttonCaps.map(function (button) {
-      return union$3([buttonCapBase.align(button, 'xy').snap(button, 'z', 'inside-').enlarge([options.clearance, options.clearance, 1]), jscadUtils.parts.Cube([6.1, 3.5, options.buttonCapHeight - capBaseHeight]).align(button, 'xy').snap(button, 'z', 'inside-').enlarge([options.clearance, options.clearance, 1])]);
+    group.add(union$2(buttonCaps), 'buttonCaps', hiddenPart);
+    group.add(union$2(buttonCaps.map(function (button) {
+      return union$2([buttonCapBase.align(button, 'xy').snap(button, 'z', 'inside-').enlarge([options.clearance, options.clearance, 1]), jscadUtils.parts.Cube([6.1, 3.5, options.buttonCapHeight - capBaseHeight]).align(button, 'xy').snap(button, 'z', 'inside-').enlarge([options.clearance, options.clearance, 1])]);
     })), 'buttonCapClearance', hiddenPart);
     var bwthickness = options.capBaseHeight;
     var connector = LeftSide(jscadUtils.parts.Cube([bwthickness, options.buttonWireYOffset, bwthickness]), mb).snap(buttonCaps[0], 'z', 'inside-').snap(buttonCaps[0], 'y', 'outside+').color('blue');
     var buttonWire = jscadUtils.parts.Cube([40, bwthickness, bwthickness]).snap(buttonCaps[0], 'x', 'center-').snap(buttonCaps[0], 'z', 'inside-').snap(connector, 'y', 'inside-').color('blue');
-    group.add(union$3(buttonWire), 'buttonWire', hiddenPart);
+    group.add(union$2(buttonWire), 'buttonWire', hiddenPart);
     var buttonWireConnector = buttonCaps.map(function (buttonCap) {
       return connector.align(buttonCap, 'x');
     });
-    group.add(union$3(buttonWireConnector), 'buttonWireConnector', hiddenPart);
-    var buttonWireClearance = union$3(buttonWireConnector.map(function (connector) {
+    group.add(union$2(buttonWireConnector), 'buttonWireConnector', hiddenPart);
+    var buttonWireClearance = union$2(buttonWireConnector.map(function (connector) {
       return connector.enlarge([options.clearance, options.clearance, options.buttonCapHeight]);
     })).union(buttonWire.enlarge([options.clearance, options.clearance, options.buttonCapHeight])).snap(buttonWire, 'z', 'inside+').color('red');
     group.add(buttonWireClearance, 'buttonWireClearance', hiddenPart);
@@ -468,7 +500,7 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
   }
 
   var debug$3 = jscadUtils.Debug('jscadRPi:Spacer');
-  /** @xtypedef {typeof import("@jwc/jscad-utils/src/triangle")} triangle */
+  /** @typedef {typeof import("@jwc/jscad-utils/src/triangle")} triangle */
 
   /**
    * Create a 3d printable support spacer between a RPi and a Hat.
@@ -485,6 +517,32 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
    * @param  {boolean} [options.hollow=false] Do not include the cross connectors on the gussets.
    * @param  {CSG} mb      A RPi board to place the spacer on.
    * @return {CSG} A CSG object of the spacer.
+   * 
+   * @exports Spacer
+   * @memberof! RaspberryPi
+   * 
+   * @example
+   function main() {
+    util.init(CSG);
+
+    var pi = RaspberryPi.BPlus().align('mb', util.unitCube(), 'xy');
+
+    pi.add(RaspberryPi.Spacer({}, pi.parts.mb), 'spacer');
+
+    pi.add(
+      RaspberryPi.PiTFT24({}, pi.parts.mb).snap(
+        'mb',
+        pi.parts.spacer,
+        'z',
+        'outside-'
+      ),
+      'screen'
+    );
+    return pi.combineAll();
+  }
+
+  // include:js
+  // endinject
    */
 
   function Spacer() {
@@ -537,7 +595,7 @@ var jscadRPi = (function (exports, jscadUtils, jsCadCSG, scadApi) {
   return exports;
 
 }({}, jscadUtils, jsCadCSG, scadApi));
-/* jscad-raspberrypi follow me on Twitter! @johnwebbcole */
+/* @jwc/jscad-raspberrypi follow me on Twitter! @johnwebbcole */
 
   // end:compat
 
