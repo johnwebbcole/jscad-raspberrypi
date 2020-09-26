@@ -6,8 +6,8 @@ test.after.always.cb('wait for logging', (t) => {
   setTimeout(t.end, 250);
 });
 
-test('create a bplus3', async (t) => {
-  var group = BPlus(3);
+test('create a bplus4', async (t) => {
+  var group = BPlus(4);
 
   var object = group.combine().Center();
 

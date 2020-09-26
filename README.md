@@ -1,10 +1,10 @@
-[![view on npm](http://img.shields.io/npm/v/jscad-raspberrypi.svg)](https://www.npmjs.org/package/jscad-raspberrypi) [![npm module downloads](http://img.shields.io/npm/dt/jscad-raspberrypi.svg)](https://www.npmjs.org/package/jscad-raspberrypi)
+[![view on npm](https://img.shields.io/npm/v/@jwc/jscad-raspberrypi)](https://www.npmjs.org/package/jscad-raspberrypi) [![npm module downloads](https://img.shields.io/npm/dt/@jwc/jscad-raspberrypi)](https://www.npmjs.org/package/jscad-raspberrypi)
 
 ![Twitter Follow](https://img.shields.io/twitter/follow/johnwebbcole?label=Follow&style=social)
 
 # jscad-raspberrypi
 
-![bplus example](./docs/images/jscad-raspberrypi.png)
+![montage](./docs/images/montage.png)
 This is a collection of jscad parts that model a RaspberryPi BPlus and various Hats. These models use the [jscad-utils](https://github.com/johnwebbcole/jscad-utils) library and return jscad-utils [`group` objects](https://github.com/johnwebbcole/jscad-utils#utilgroupnames-objects--object).
 
 ## Installation

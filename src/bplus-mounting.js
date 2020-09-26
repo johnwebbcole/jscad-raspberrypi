@@ -1,15 +1,15 @@
-import { Group, Debug } from '@jwc/jscad-utils';
+import { Debug, Group } from '@jwc/jscad-utils';
 import { MountingHole, Mountingpad } from './rpi-parts';
 const debug = Debug('jscadRPi:BPlusMounting');
 
 export function holes(mb, options = {}) {
   options = Object.assign(options, {
-    height: 8
+    height: 8,
   });
   debug('holes', mb, options);
 
   // var hole = LeftSide(MountingHole(options && options.diameter || undefined, options && options.height || 8), mb);
-  var hole = MountingHole(options.diameter, options.height)
+  var hole = MountingHole(options.diameter || 3.25, options.height)
     .snap(mb, 'xy', 'inside-')
     .align(mb, 'z');
 
@@ -17,7 +17,7 @@ export function holes(mb, options = {}) {
     hole.midlineTo('x', 3.5).midlineTo('y', 3.5),
     hole.midlineTo('x', 61.5).midlineTo('y', 3.5),
     hole.midlineTo('x', 3.5).midlineTo('y', 52.5),
-    hole.midlineTo('x', 61.5).midlineTo('y', 52.5)
+    hole.midlineTo('x', 61.5).midlineTo('y', 52.5),
   ];
 
   return Group('hole1,hole2,hole3,hole4', holes);
@@ -36,7 +36,7 @@ export function pads(mb, options = {}) {
   options = Object.assign(
     {
       snap: 'outside-',
-      height: 4
+      height: 4,
     },
     options
   );
@@ -48,7 +48,7 @@ export function pads(mb, options = {}) {
     pad.midlineTo('x', 3.5).midlineTo('y', 3.5),
     pad.midlineTo('x', 61.5).midlineTo('y', 3.5),
     pad.midlineTo('x', 3.5).midlineTo('y', 52.5),
-    pad.midlineTo('x', 61.5).midlineTo('y', 52.5)
+    pad.midlineTo('x', 61.5).midlineTo('y', 52.5),
   ];
 
   // var b = mb.getBounds();
