@@ -46,7 +46,7 @@ export default function HQCameraModule() {
     'board'
   );
 
-  var hole = Parts.Cylinder(2.5, 10)
+  var hole = Parts.Cylinder(3.25, 10)
     .snap(camera.parts.board, 'xy', 'inside+', 1.25)
     .translate([-4, -4, -5])
 

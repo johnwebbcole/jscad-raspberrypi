@@ -26,11 +26,9 @@ function buttonCap(name, button) {
   g.add(
     Parts.Cylinder(4, 3)
       .fillet(1, 'z+')
-      .translate([0, 0, 1.4])
+      // .translate([0, 0, 1])
       .union(
-        Parts.Cylinder(6, 0.6)
-          .bisect('x', -0.5)
-          .parts.negative.translate([0, 0, 1])
+        Parts.Cylinder(6, 0.5).bisect('x', -0.5).parts.negative //.translate([0, 0, 1])
       )
 
       .color('blue')
@@ -40,12 +38,13 @@ function buttonCap(name, button) {
   );
 
   g.add(
-    Parts.Cylinder(7.25, 1)
+    Parts.Cylinder(7, 0.75)
       .bisect('x', -0.5)
-      .parts.negative.union(Parts.Cylinder(5, 2).translate([0, 0, 1]))
+      .parts.negative.color('green')
+      .union(Parts.Cylinder(4.5, 2).color('yellow').translate([0, 0, 0]))
       .align(g.parts.cap, 'xy')
-      .snap(g.parts.cap, 'z', 'inside-')
-      .color('red'),
+      .snap(g.parts.cap, 'z', 'inside-'),
+    // .color('red'),
     'clearance',
     true
   );
@@ -128,7 +127,7 @@ export default function miniPiTFT() {
   );
 
   g.add(
-    Parts.Cube([1, 5, 1])
+    Parts.Cube([1, 5, 0.5])
       .color('blue')
       .align(g.parts.buttonCap1, 'x')
       .snap(g.parts.buttonCap1, 'y', 'outside+', 1)
@@ -138,7 +137,7 @@ export default function miniPiTFT() {
   );
 
   g.add(
-    g.parts['button-connector'].enlarge(1, 1, 1).color('red'),
+    g.parts['button-connector'].enlarge(0.5, 0.5, 0.5).color('red'),
     'button-connector-clearance',
     true
   );

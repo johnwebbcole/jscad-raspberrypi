@@ -2533,7 +2533,7 @@ function initJscadRPi() {
             var t = 1.1;
             var camera = jscadUtils.Group();
             camera.add(jscadUtils.parts.RoundedCube(38, 38, t, 1.4).Center().color("green", .75), "board");
-            var hole = jscadUtils.parts.Cylinder(2.5, 10).snap(camera.parts.board, "xy", "inside+", 1.25).translate([ -4, -4, -5 ]).color("red");
+            var hole = jscadUtils.parts.Cylinder(3.25, 10).snap(camera.parts.board, "xy", "inside+", 1.25).translate([ -4, -4, -5 ]).color("red");
             camera.add(hole, "hole1", true);
             camera.add(hole.rotateZ(90), "hole2", true);
             camera.add(hole.rotateZ(180), "hole3", true);
@@ -2559,8 +2559,8 @@ function initJscadRPi() {
         }
         function buttonCap(name, button) {
             var g = jscadUtils.Group(name);
-            g.add(jscadUtils.parts.Cylinder(4, 3).fillet(1, "z+").translate([ 0, 0, 1.4 ]).union(jscadUtils.parts.Cylinder(6, .6).bisect("x", -.5).parts.negative.translate([ 0, 0, 1 ])).color("blue").align(button, "xy").snap(button, "z", "outside-"), "cap");
-            g.add(jscadUtils.parts.Cylinder(7.25, 1).bisect("x", -.5).parts.negative.union(jscadUtils.parts.Cylinder(5, 2).translate([ 0, 0, 1 ])).align(g.parts.cap, "xy").snap(g.parts.cap, "z", "inside-").color("red"), "clearance", true);
+            g.add(jscadUtils.parts.Cylinder(4, 3).fillet(1, "z+").union(jscadUtils.parts.Cylinder(6, .5).bisect("x", -.5).parts.negative).color("blue").align(button, "xy").snap(button, "z", "outside-"), "cap");
+            g.add(jscadUtils.parts.Cylinder(7, .75).bisect("x", -.5).parts.negative.color("green").union(jscadUtils.parts.Cylinder(4.5, 2).color("yellow").translate([ 0, 0, 0 ])).align(g.parts.cap, "xy").snap(g.parts.cap, "z", "inside-"), "clearance", true);
             return g;
         }
         function miniPiTFT() {
@@ -2574,8 +2574,8 @@ function initJscadRPi() {
             g.add(boardButton("button2", board, jscadUtils.util.inch(.18)), "button2", false, "button2-");
             g.add(buttonCap("buttonCap1", g.parts.button1), "buttonCap1", true, "buttonCap1-");
             g.add(buttonCap("buttonCap2", g.parts.button2), "buttonCap2", true, "buttonCap2-");
-            g.add(jscadUtils.parts.Cube([ 1, 5, 1 ]).color("blue").align(g.parts.buttonCap1, "x").snap(g.parts.buttonCap1, "y", "outside+", 1).snap(g.parts.buttonCap1, "z", "inside-"), "button-connector", true);
-            g.add(g.parts["button-connector"].enlarge(1, 1, 1).color("red"), "button-connector-clearance", true);
+            g.add(jscadUtils.parts.Cube([ 1, 5, .5 ]).color("blue").align(g.parts.buttonCap1, "x").snap(g.parts.buttonCap1, "y", "outside+", 1).snap(g.parts.buttonCap1, "z", "inside-"), "button-connector", true);
+            g.add(g.parts["button-connector"].enlarge(.5, .5, .5).color("red"), "button-connector-clearance", true);
             g.add(jscadUtils.parts.Tube(7, 3, 7.5).snap(board, "x", "inside-").snap(board, "y", "inside+").snap(board, "z", "outside+").color("yellow"), "standoff", true);
             return g;
         }
