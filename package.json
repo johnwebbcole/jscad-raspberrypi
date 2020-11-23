@@ -23,7 +23,7 @@
   "bugs": "https://johnwebbcole.gitlab.io/jscad-raspberrypi/issues",
   "repository": {
     "type": "git",
-    "url": "https://jwc.dev"
+    "url": "git@gitlab.com:johnwebbcole/jscad-raspberrypi.git"
   },
   "license": "ISC",
   "devDependencies": {
