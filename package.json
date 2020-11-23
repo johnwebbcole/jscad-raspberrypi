@@ -4,7 +4,8 @@
   "description": "jscad parts library for RaspberryPi",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc --reporter=html --reporter=lcov --reporter=text ava",
+    "test": "ava",
+    "coverage": "nyc --reporter=html --reporter=lcov --reporter=text ava",
     "build": "gulp all",
     "start": "gulp",
     "docs": "vuepress-jsdoc --source ./srcx --dist ./docs && npx vuepress build ./docs"
