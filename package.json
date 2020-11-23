@@ -1,6 +1,6 @@
 {
   "name": "@jwc/jscad-raspberrypi",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "jscad parts library for RaspberryPi",
   "main": "src/index.js",
   "scripts": {
