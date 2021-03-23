@@ -173,7 +173,7 @@ export default function BPlus(model = 2, options) {
      */
     group.add(
       RightSide(Parts.Cube([21.5, 16.5, 13.5]).color('lightgray'), mb)
-        .translate([1, 0, 0])
+        .translate([2, 0, 0])
         .midlineTo('y', 45.75),
       'ethernet'
     );
@@ -192,7 +192,7 @@ export default function BPlus(model = 2, options) {
     usb.add(
       Parts.Cube([17, 13.1, 15])
         .snap(group.parts.ethernet, 'x', 'inside+', -1)
-        .snap(mb, 'z', 'outside-')
+        .snap(mb, 'z', 'outside-', 1.5)
         .color('lightgray'),
       'body'
     );

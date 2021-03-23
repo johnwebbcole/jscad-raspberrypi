@@ -2384,10 +2384,10 @@ function initJscadRPi() {
                     group.add(BoardLed().snap(mb, "z", "outside-").translate([ 1, 46, 0 ]).color("red"), "powerled");
                 }
             } else {
-                group.add(RightSide(jscadUtils.parts.Cube([ 21.5, 16.5, 13.5 ]).color("lightgray"), mb).translate([ 1, 0, 0 ]).midlineTo("y", 45.75), "ethernet");
+                group.add(RightSide(jscadUtils.parts.Cube([ 21.5, 16.5, 13.5 ]).color("lightgray"), mb).translate([ 2, 0, 0 ]).midlineTo("y", 45.75), "ethernet");
                 group.add(jscadUtils.parts.Cube([ clearance, 16.5, 13.5 ]).align(group.parts.ethernet, "yz").snap(group.parts.ethernet, "x", "outside-").color("red"), "clearance-ethernet", true, "clearance");
                 var usb = jscadUtils.Group();
-                usb.add(jscadUtils.parts.Cube([ 17, 13.1, 15 ]).snap(group.parts.ethernet, "x", "inside+", -1).snap(mb, "z", "outside-").color("lightgray"), "body");
+                usb.add(jscadUtils.parts.Cube([ 17, 13.1, 15 ]).snap(group.parts.ethernet, "x", "inside+", -1).snap(mb, "z", "outside-", 1.5).color("lightgray"), "body");
                 usb.add(jscadUtils.parts.Cube([ 1, 15, 16 ]).snap(usb.parts.body, "x", "outside-").align(usb.parts.body, "yz").color("lightgray"), "flange");
                 group.add(usb.clone().translate(jscadUtils.util.calcmidlineTo(usb.parts.body, "y", 27)), "usb1", false, "usb1");
                 group.add(jscadUtils.parts.Cube([ clearance, 15, 16 ]).align(group.parts.usb1, "yz").snap(group.parts.usb1, "x", "outside-").color("red"), "clearance-usb1", true);
